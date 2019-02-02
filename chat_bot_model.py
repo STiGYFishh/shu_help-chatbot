@@ -4,7 +4,7 @@ import tensorflow as tf
 import tflearn
 import random
 import nltk
-from ntlk.stem.lancaster import LancasterStemmer
+from nltk.stem.lancaster import LancasterStemmer
 
 stemmer = LancasterStemmer()
 
@@ -19,7 +19,7 @@ ignore_list = ['?', '!']
 
 for intent in intents['intents']:
     for pattern in intent['patterns']:
-        word = nltk.tokenize(pattern)
+        word = nltk.word_tokenize(pattern)
         word_list.extend(word)
 
         documents.append((word, intent['tag']))
