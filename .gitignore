@@ -1,0 +1,7 @@
+
+chat_model.tfl.*
+chatbot_logs/*
+checkpoint
+training_data.json
+*.DESKTOP-SSVP007
+development_notes.txt

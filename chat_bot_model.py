@@ -68,7 +68,7 @@ net = tflearn.regression(net)
 model = tflearn.DNN(net, tensorboard_dir='chatbot_logs')
 
 # Start training
-model.fit(train_x, train_y, n_epoch=1000, batch_size=8, show_metric=True)
+model.fit(train_x, train_y, n_epoch=5000, batch_size=16, show_metric=True, validation_set=None)
 model.save('chat_model.tfl')
 
 data_structures = {
@@ -79,4 +79,4 @@ data_structures = {
 }
 
 with open('training_data.json', 'w') as fh:
-    json.dump(data_structures, fh, indent=4)
+    json.dump(data_structures, fh)
