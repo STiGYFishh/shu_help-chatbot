@@ -65,11 +65,11 @@ net = tflearn.fully_connected(net, len(train_y[0]), activation='softmax')
 net = tflearn.regression(net)
 
 # Define model with tensorboard logging
-model = tflearn.DNN(net, tensorboard_dir='tflearn_logs')
+model = tflearn.DNN(net, tensorboard_dir='chatbot_logs')
 
 # Start training
 model.fit(train_x, train_y, n_epoch=1000, batch_size=8, show_metric=True)
-model.save('model.tflearn')
+model.save('chat_model.tfl')
 
 data_structures = {
     'words': words,
