@@ -67,11 +67,16 @@ def probability(sentence, error_threshold=0.5):
 
 
 def response(sentence, context, blackboard_ok=True):
+    manual_intervention = (
+        'I seem to be having an issue understanding the problem, '
+        'you can contact SHU IT Support directly by emailing ithelp@shu.ac.uk,'
+        ' or by phoning 0114 225 3333.'
+        '\nIf you do not wish to contact IT Support directly you can try rephrasing the question.')
+
     try:
         if context['not_understood'] >= 3:
-            for i in intents['intents']:
-                if i['tag'] == 'human_intervention':
-                    return (random.choice(i['responses']), context)
+            context['not_understood'] = 0
+            return (manual_intervention, context)
     except KeyError:
         context['not_understood'] = 0
 
