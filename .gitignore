@@ -5,3 +5,5 @@ checkpoint
 training_data.json
 *.DESKTOP-SSVP007
 development_notes.txt
+cookies.txt
+*.pyc

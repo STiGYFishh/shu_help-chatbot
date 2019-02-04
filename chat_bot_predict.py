@@ -53,14 +53,6 @@ def bag_array(sentance, words):
 
 def probability(sentence, error_threshold=0.5):
     results = model.predict([bag_array(sentence, words)])[0]
-
-    res = []
-    for i, r in enumerate(results):
-        res.append((categories[i], r))
-        res.sort(key=lambda x: x[1], reverse=True)
-    for r in res:
-        print(r[0], r[1])
-
     results = [[i, r] for i, r in enumerate(results) if r > error_threshold]
 
     # Sort by highest probability
@@ -74,46 +66,37 @@ def probability(sentence, error_threshold=0.5):
     return return_list
 
 
-def response(sentence, context, user='123', blackboard_ok=True):
+def response(sentence, context, blackboard_ok=True):
+    try:
+        if context['not_understood'] >= 3:
+            for i in intents['intents']:
+                if i['tag'] == 'human_intervention':
+                    return (random.choice(i['responses']), context)
+    except KeyError:
+        context['not_understood'] = 0
+        context.modified = True
+
     results = probability(sentence)
     response = ""
     if results:
         while results:
             for i in intents['intents']:
                 if i['tag'] == results[0][0]:
-                    if 'blackboard_related' in i and not blackboard_ok:
-                        response += """
-                            Blackboard is currently unavailable.
-                            If your query is related to blackboard services
-                            please check back later.\n\n"""
-
-                        context[user] = 'blackboard_down_continue'
-
                     if 'context_set' in i:
-                        context[user] = i['context_set']
+                        context['path'] = i['context_set']
+                        context.modified = True
 
-                    if 'context_filter' not in i or (
-                            user in context and 'context_filter' in i and i['context_filter'] == context[user]):
-                        response += random.choice(i['responses'])
-                        return (response, context)
+                    if 'blackboard_related' in i and not blackboard_ok:
+                        context['blackboard'] = True
+                        context.modified = True
+
+                    if 'context_filter' not in i or i['context_filter'] == context['path']:
+                        response = random.choice(i['responses'])
+
+                    return (response, context)
 
             results.pop(0)
     else:
-        return ("I'm sorry, I didn't quite understand that. Please try rephrasing the question.", context)
-
-print('Hi i have a problem')
-print(response('Hi i have a problem', {}), end='\n\n')
-print('i cant get on blackboard')
-print(response('i cant get on blackboard', {}), end='\n\n')
-print('dunno wot my pasword is')
-print(response('dunno wot my pasword is', {}), end='\n\n')
-print('my shit isnt working')
-print(response('my shit isnt working', {}), end='\n\n')
-print('yeah mate thats done it cheers')
-print(response('yeah mate thats done it cheers', {}), end='\n\n')
-
-while True:
-    ctx = {}
-    q = input('query: ')
-    r, ctx = response(q, ctx)
-    print(r)
+        context['not_understood'] += 1
+        context.modified = True
+        return ("I'm sorry, I didn't quite understand that. Please try rephrasing the question.\n", context)
