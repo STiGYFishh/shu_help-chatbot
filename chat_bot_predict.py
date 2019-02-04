@@ -74,7 +74,6 @@ def response(sentence, context, blackboard_ok=True):
                     return (random.choice(i['responses']), context)
     except KeyError:
         context['not_understood'] = 0
-        context.modified = True
 
     results = probability(sentence)
     response = ""
@@ -84,11 +83,9 @@ def response(sentence, context, blackboard_ok=True):
                 if i['tag'] == results[0][0]:
                     if 'context_set' in i:
                         context['path'] = i['context_set']
-                        context.modified = True
 
                     if 'blackboard_related' in i and not blackboard_ok:
                         context['blackboard'] = True
-                        context.modified = True
 
                     if 'context_filter' not in i or i['context_filter'] == context['path']:
                         response = random.choice(i['responses'])
@@ -98,5 +95,4 @@ def response(sentence, context, blackboard_ok=True):
             results.pop(0)
     else:
         context['not_understood'] += 1
-        context.modified = True
         return ("I'm sorry, I didn't quite understand that. Please try rephrasing the question.\n", context)
