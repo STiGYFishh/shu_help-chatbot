@@ -8,7 +8,7 @@ app.secret_key = 'ABC'
 app.config['SESSION_TYPE'] = 'filesystem'
 
 
-@app.route('/api/v1/query', methods=['POST'])
+@app.route('/api/v1/query', methods=['GET'])
 def query():
     if not request.json:
         abort(400)
